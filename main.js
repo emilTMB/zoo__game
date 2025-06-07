@@ -274,7 +274,7 @@ function renderPanel() {
   const params = document.createElement("div");
   params.className = "panel-row";
   params.innerHTML = `
-        <label>Замедление (slow): <input type="number" min="0" max="1" step="0.01" value="${state.slow}" id="slow-input"></label>
+        <label>Скорость (0.1 - 1): <input type="number" min="0" max="1" step="0.01" value="${state.slow}" id="slow-input"></label>
         <label>Макс. дистанция: <input type="number" min="10" max="300" step="1" value="${state.maxDistance}" id="maxdist-input"></label>
       `;
   panel.appendChild(params);
