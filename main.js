@@ -1,4 +1,4 @@
-// ===== Утилитка =====
+// ===== Утилитки =====
 const clamp = (v, mn, mx) => Math.max(mn, Math.min(mx, v));
 
 // ===== Дефолтный пресет =====
@@ -46,7 +46,7 @@ function deletePreset(name) {
   localStorage.setItem("particlePresets", JSON.stringify(all));
 }
 
-// ===== Канвас и логика =====
+// ===== Канвас и его логика =) =====
 const canvas = document.getElementById("life");
 const ctx = canvas.getContext("2d");
 function resizeCanvas() {
@@ -56,7 +56,7 @@ function resizeCanvas() {
 resizeCanvas();
 window.addEventListener("resize", () => {
   resizeCanvas();
-  renderParticles(); // сразу перерисовываем
+  renderParticles();
 });
 
 // Создание частиц
@@ -270,11 +270,11 @@ function renderPanel() {
     };
   });
 
-  // === Замедление и maxDistance ===
+  // === Скорость и maxDistance ===
   const params = document.createElement("div");
   params.className = "panel-row";
   params.innerHTML = `
-        <label>Скорость (0.1 - 1): <input type="number" min="0" max="1" step="0.01" value="${state.slow}" id="slow-input"></label>
+        <label>Скорость (от 0.1 - до 1): <input type="number" min="0" max="1" step="0.01" value="${state.slow}" id="slow-input"></label>
         <label>Макс. дистанция: <input type="number" min="10" max="300" step="1" value="${state.maxDistance}" id="maxdist-input"></label>
       `;
   panel.appendChild(params);
@@ -285,7 +285,7 @@ function renderPanel() {
     state.maxDistance = +e.target.value;
   };
 
-  // === Сохранения ===
+  // === Сохранения и действия ===
   const saveBlock = document.createElement("div");
   saveBlock.className = "save-block";
 
@@ -338,7 +338,7 @@ function renderPanel() {
   };
   saveBlock.appendChild(deleteBtn);
 
-  // Сброс к дефолтному
+  // Кнопка сбросить
   const resetBtn = document.createElement("button");
   resetBtn.textContent = "Сбросить";
   resetBtn.onclick = () => {
@@ -349,6 +349,27 @@ function renderPanel() {
     }
   };
   saveBlock.appendChild(resetBtn);
+
+  // Кнопка обновить анимацию
+  const restartBtn = document.createElement("button");
+  restartBtn.textContent = "Обновить анимацию";
+  restartBtn.onclick = () => {
+    createParticlesFromState();
+  };
+  saveBlock.appendChild(restartBtn);
+
+  // Кнопка "?"
+  const helpBtn = document.createElement("button");
+  helpBtn.title = "Что это?";
+  helpBtn.style.background = "transparent";
+  helpBtn.style.border = "none";
+  helpBtn.style.color = "#87eaf2";
+  helpBtn.style.fontWeight = "bold";
+  helpBtn.textContent = "?";
+  helpBtn.onclick = () => {
+    document.getElementById("help-modal").style.display = "flex";
+  };
+  saveBlock.appendChild(helpBtn);
 
   panel.appendChild(saveBlock);
 }
