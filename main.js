@@ -19,7 +19,7 @@ const defaultPreset = {
     "2_1": 0,
     "2_2": 0.15,
   },
-  slow: 0.5,
+  slow: 0.2,
   maxDistance: 80,
 };
 
