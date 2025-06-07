@@ -4,7 +4,7 @@ const clamp = (v, mn, mx) => Math.max(mn, Math.min(mx, v));
 // ===== Дефолтный пресет =====
 const defaultPreset = {
   colors: [
-    { name: "Green", color: "#008000", count: 200, size: 5 },
+    { name: "Green", color: "#008000", count: 300, size: 5 },
     { name: "Red", color: "#ff0000", count: 200, size: 5 },
     { name: "Yellow", color: "#ffff00", count: 200, size: 5 },
   ],
