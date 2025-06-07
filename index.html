@@ -1,129 +1,135 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-
-<body>
-
-    <canvas id="life" width="500px" height="500px"></canvas>
-
-    <script>
-        const m = document.getElementById('life').getContext('2d');
-        // отрисовка
-        const draw = (x, y, c, s) => {
-            m.fillStyle = c;
-            m.fillRect(x, y, s, s);
-        };
-        // параметры 'vx':0, 'vy':0, - скорость, остальное координаты
-
-        const particles = [];
-
-        const createParticle = (x, y, c) => {
-            return {
-                'x': x,
-                'y': y,
-                'vx': 0,
-                'vy': 0,
-                'color': c
-            };
-        };
-
-        // функция для случайного положения каждой частицы с внутренней функцией для создания группы частиц
-        const random = () => {
-            return Math.random() * 400 + 50;
-        };
-
-        const create = (number, color) => {
-            const group = [];
-            for (let i = 0; i < number; i++) {
-                const particle = createParticle(random(), random(), color);
-                group.push(particle);
-                particles.push(particle);
-            }
-            return group;
-        };
-
-        // правило для частиц (притяжение и отталкивание)
-        rule = (particles1, particles2, g) => {
-            for (let i = 0; i < particles1.length; i++) {
-                // сила для двух измерений
-                fx = 0;
-                fy = 0;
-                for (let j = 0; j < particles2.length; j++) {
-                    //частица 0
-                    a = particles1[i]
-                    //частица 1
-                    b = particles2[j]
-                    // вычисляем расстояние между ними по законам пифагора
-                    dx = a.x - b.x;
-                    dy = a.y - b.y;
-                    d = Math.sqrt(dx * dx + dy * dy);
-                    // вычисляем силу отталкивания частиц и распределяем по двум измерениям из соображений локализации процесса можем ограничить силу до 80
-                    let max = 80;
-                    if (d > 0 && d < max) {
-                        F = g * 1 / d;
-                        fx += (F * dx);
-                        fy += (F * dy);
-                    }
-                }
-                //создаем ускорение (увеличиваем скорость частиц на величину приложенной силы и изменяем их положение в соответствии с новой скоростью)
-                // мы можем добавить коэффициенты для замедления скорости slow
-                let slow = 0.5;
-                a.vx = (a.vx + fx) * slow;
-                a.vy = (a.vy + fy) * slow;
-                // Обновляем позиции Х и У в соответствии с Расчетной силой
-                a.x += a.vx;
-                a.y += a.vy;
-                // проверка на выхождение частицы из экрана (Запрещаем выходить за предел поля а точнее ее ускорение поменяется и станет со знаком минус - частица сначала замедлится а затем ускорится в обратном направлении и в итоге вернется назад)
-                if (a.x <= 0 || a.x >= 500) { a.vx *= -1 }
-                if (a.y <= 0 || a.x >= 500) { a.vy *= -1 }
-            }
-        }
-
-        // Частицы
-        const yellow = create(200, 'yellow');
-        const red = create(200, 'red');
-        const green = create(200, 'green')
-
-        // АНИМАЦИЯ
-        const update = () => {
-            // Правила притяжения и отталкивания для частиц комментарий для понимания аналогии и простоты управления
-                                                    //красные притягиваются друг к другу
-                                            // rule(red, red, -0.1);
-                                            //     //желтые немного притягивают красных
-                                            // rule(red, yellow, -0.01);
-                                            //     //красные отталкивают желтых
-                                            // rule(yellow, red, 0.01);
-                                // // Одно из взаимодействий трех цветов
-                                //     rule(red, red, -0.1);
-                                //     rule(yellow, red, 0.15);
-                                //     rule(green, red, 0.2);
-                                //     rule(green, green, -0.7);
-                                //     rule(red, green, -0.1);
-                        // Попугай 3 цвета
-                        rule(green, green, -0.32);
-                        rule(green, red, -0.17);
-                        rule(green, yellow, 0.34);
-                        rule(red, red, -0.10);
-                        rule(red, green, -0.34); 
-                        rule(yellow, yellow, 0.15);
-                        rule(yellow, green, -0.20);
-            // отчищаем поле
-            m.clearRect(0, 0, 500, 500);
-            draw(0, 0, 'black', 500);
-            // добавляем на поле новые координаты (отрисовываем) каждую частицу
-            for (let i = 0; i < particles.length; i++) {
-                draw(particles[i].x, particles[i].y, particles[i].color, 5);
-            }
-            requestAnimationFrame(update);
-        };
-
-        update();
-    </script>
-</body>
-
+  <head>
+    <meta charset="UTF-8" />
+    <title>Particle Life — Popugai Edition</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        height: 100%;
+        width: 100vw;
+        font-family: system-ui, sans-serif;
+        background: #181818;
+        color: #eee;
+      }
+      body {
+        height: 100vh;
+        width: 100vw;
+      }
+      #life {
+        display: block;
+        width: 100vw;
+        height: 70vh;
+        background: #000;
+        margin: 0;
+      }
+      #control-panel {
+        height: 30vh;
+        max-height: 30vh;
+        overflow-y: auto;
+        background: #202124e6;
+        border-top: 2px solid #333;
+        padding: 18px 2vw 12px 2vw;
+        box-sizing: border-box;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 10;
+      }
+      .color-group {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 8px;
+        flex-wrap: wrap;
+        background: #282828;
+        border-radius: 10px;
+        padding: 7px 12px;
+      }
+      .color-group input[type="color"] {
+        border: none;
+        background: transparent;
+      }
+      .color-group label {
+        font-size: 15px;
+        min-width: 48px;
+        opacity: 0.88;
+      }
+      .color-group button {
+        margin-left: 10px;
+        background: #333;
+        color: #f45;
+        border: none;
+        border-radius: 6px;
+        padding: 3px 8px;
+        cursor: pointer;
+      }
+      .rules-table {
+        margin: 14px 0;
+        border-collapse: collapse;
+        width: 100%;
+      }
+      .rules-table th,
+      .rules-table td {
+        font-size: 13px;
+        padding: 2px 4px;
+        border: 1px solid #333;
+        text-align: center;
+      }
+      .rule-input {
+        width: 45px;
+      }
+      .panel-row {
+        display: flex;
+        gap: 30px;
+        align-items: center;
+        margin-top: 10px;
+      }
+      .panel-row input[type="number"] {
+        width: 60px;
+      }
+      .save-block {
+        margin-top: 18px;
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+      select,
+      input[type="text"] {
+        font-size: 15px;
+        border-radius: 6px;
+        border: 1px solid #444;
+        padding: 2px 7px;
+        background: #202124;
+        color: #eee;
+      }
+      .preset-list {
+        margin-left: 18px;
+      }
+      .actions button {
+        margin-right: 9px;
+        border-radius: 7px;
+        border: none;
+        background: #444;
+        color: #eee;
+        padding: 6px 14px;
+        font-size: 14px;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+      .actions button:hover {
+        background: #6a6;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="life"></canvas>
+    <div id="control-panel"></div>
+    <script src="./main.js"></script>
+  </body>
 </html>
